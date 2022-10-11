@@ -11,7 +11,7 @@ class APIListSimpson {
     
     static let shared = APIListSimpson()
     
-    func ListFetchList(completion: @escaping ([SimpsonList]) -> ()) {
+    func listFetchList(completion: @escaping ([SimpsonList]) -> ()) {
         let urlString = "https://api.sampleapis.com/simpsons/characters"
         let url = URL (string: urlString)!
         let task = URLSession.shared.dataTask(with: url) { (data,_,Error) in

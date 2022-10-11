@@ -11,7 +11,12 @@ final class MainListViewController: UICollectionViewController {
     var listData = [SimpsonList]()
     
     init() {
-        super.init(collectionViewLayout: MainListViewController.layout())
+        //Aspecto de como se mostrara la lista
+        var layout: UICollectionViewLayout {
+            let config = UICollectionLayoutListConfiguration(appearance: .grouped)
+            return UICollectionViewCompositionalLayout.list(using: config)
+        }
+        super.init(collectionViewLayout: layout)
     }
     
     required init?(coder: NSCoder) {
@@ -20,14 +25,13 @@ final class MainListViewController: UICollectionViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        let funcion = { (fecheando: [SimpsonList]) in
-            DispatchQueue.main.async {
-                self.listData = fecheando
-                self.collectionView.reloadData()
+        let completion = { (dataList: [SimpsonList]) in
+            DispatchQueue.main.async { [weak self] in
+                self?.listData = dataList
+                self?.collectionView.reloadData()
             }
         }
-        APIListSimpson.shared.ListFetchList(completion: funcion)
-    
+        APIListSimpson.shared.listFetchList(completion: completion)
     }
     
     private let registerListCell = UICollectionView.CellRegistration<UICollectionViewListCell, SimpsonList> { cell, _, item in
@@ -36,21 +40,12 @@ final class MainListViewController: UICollectionViewController {
         cell.contentConfiguration = configuration
       }
     
-
     //Cantidad de secciones que tendra la lista
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return listData.count
-       
-    }
-    
-    //Aspecto de como se mostrara la lista
-    private static func layout() -> UICollectionViewLayout {
-        let config = UICollectionLayoutListConfiguration(appearance: .grouped)
-        return UICollectionViewCompositionalLayout.list(using: config)
     }
 
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let configType = self.registerListCell
-        return collectionView.dequeueConfiguredReusableCell(using: configType, for: indexPath, item: listData[indexPath.row])
+        return collectionView.dequeueConfiguredReusableCell(using: registerListCell, for: indexPath, item: listData[indexPath.row])
     }
 }
