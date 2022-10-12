@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct SimpsonList: Decodable, Identifiable {
+struct SimpsonList: Codable, Hashable {
     let id: Int
     let name, normalizedName: String
     let gender: Gender

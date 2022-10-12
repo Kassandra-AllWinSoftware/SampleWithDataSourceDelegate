@@ -9,31 +9,23 @@ import Foundation
 import Combine
 
 final class ListViewModel {
-    weak var transitionDelegate: TransitionDelegate?
-    let list = PassthroughSubject <[SimpsonList], Error>()
-    private var cancellables = Set <AnyCancellable>()
-//    private let store: SimpsonList
-//
-//    init(_: store =  SimpsonList){
-//        store = store
-//    }
     
+    var listData = [SimpsonList]()
+    let listSubject = PassthroughSubject<[SimpsonList], Error>()
+    private var fetched = [SimpsonList]() {
+        didSet {
+            listSubject.send(fetched)
+        }
+    }
     
     func loadData() {
-        let receive = { [unowned self] (data: [SimpsonList]) -> Void in
-            DispatchQueue.main.async {
-                list.send(data)
+        let completion = { (dataList: [SimpsonList]) in
+            DispatchQueue.main.async { [unowned self] in
+                listSubject.send(dataList)
             }
         }
-        let completion = { [unowned self] (completion: Subscribers.Completion <Error>) -> Void in
-            switch  completion {
-                case .finished:
-                    break
-                case .failure(let failure):
-                    list.send(completion: .failure(failure))
-            }
-        }
-        
-        
+        APIListSimpson.shared.listFetchList(completion: completion)
     }
 }
+
+

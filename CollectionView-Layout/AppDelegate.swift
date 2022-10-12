@@ -15,7 +15,7 @@ import UIKit
         
         window = UIWindow(frame: UIScreen.main.bounds)
         window?.makeKeyAndVisible()
-        window?.rootViewController = MainListViewController()
+        window?.rootViewController = MainListViewController(viewModel: ListViewModel())
         return true
     }
 
